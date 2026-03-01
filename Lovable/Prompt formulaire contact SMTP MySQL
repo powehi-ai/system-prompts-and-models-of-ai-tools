@@ -161,5 +161,129 @@ Niveaux : INFO (succès), WARN (honeypot, rate limit, fallback), ERROR (MySQL, S
 
 Ce prompt couvre l'intégralité de la stack formulaire. Collez-le dans les **custom instructions** du nouveau projet pour reproduire la même architecture.
 
-Publier le site
-Tester le formulaire E2E
+########################################################################################################
+
+Pour implantation Mysql / PHP : 
+
+---
+
+### 1. Base de données MySQL
+
+```sql
+-- Créer la base (si besoin)
+CREATE DATABASE IF NOT EXISTS seryvon_db
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE seryvon_db;
+
+-- Table des soumissions
+CREATE TABLE contact_submissions (
+  id         INT AUTO_INCREMENT PRIMARY KEY,
+  name       VARCHAR(100) NOT NULL,
+  email      VARCHAR(255) NOT NULL,
+  phone      VARCHAR(20)  NOT NULL,
+  company    VARCHAR(100) DEFAULT NULL,
+  message    TEXT         NOT NULL,
+  created_at DATETIME     DEFAULT CURRENT_TIMESTAMP,
+  ip_address VARCHAR(45)  DEFAULT NULL,
+  INDEX idx_email (email),
+  INDEX idx_created (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
+
+---
+
+### 2. Rate limiting (table optionnelle, alternative au fichier JSON)
+
+```sql
+CREATE TABLE rate_limits (
+  ip_hash    VARCHAR(32) PRIMARY KEY,
+  attempts   INT DEFAULT 1,
+  first_attempt DATETIME DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_first_attempt (first_attempt)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+```
+
+---
+
+### 3. Utilisateur MySQL dédié (bonne pratique sécurité)
+
+```sql
+CREATE USER 'seryvon_app'@'localhost' IDENTIFIED BY 'VOTRE_MOT_DE_PASSE_FORT';
+GRANT SELECT, INSERT, UPDATE, DELETE ON seryvon_db.* TO 'seryvon_app'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+---
+
+### 4. PHPMailer — Installation via Composer
+
+```bash
+# Installer Composer (si pas déjà installé)
+curl -sS https://getcomposer.org/installer | php
+sudo mv composer.phar /usr/local/bin/composer
+
+# Dans le dossier de votre API backend
+cd /var/www/votre-site/api
+
+# Initialiser le projet Composer (si pas de composer.json)
+composer init --no-interaction
+
+# Installer PHPMailer
+composer require phpmailer/phpmailer
+
+# Vérifier l'installation
+ls vendor/phpmailer/phpmailer/src/
+# → PHPMailer.php, SMTP.php, Exception.php
+```
+
+---
+
+### 5. Structure de fichiers recommandée côté serveur
+
+```
+/api/
+├── composer.json
+├── composer.lock
+├── vendor/               ← généré par Composer
+├── config.php            ← credentials (hors git !)
+├── contact.php           ← endpoint POST
+└── contact_errors.log    ← logs serveur
+```
+
+---
+
+### 6. Fichier `config.php` (template)
+
+```php
+ [
+        'host'     => 'localhost',
+        'dbname'   => 'seryvon_db',
+        'user'     => 'seryvon_app',
+        'password' => 'VOTRE_MOT_DE_PASSE_FORT',
+    ],
+    'smtp' => [
+        'host'     => 'smtp.votre-provider.com',
+        'port'     => 587,
+        'username' => 'contact@seryvon.com',
+        'password' => 'VOTRE_SMTP_PASSWORD',
+        'from'     => 'contact@seryvon.com',
+        'from_name'=> 'Seryvon',
+        'to'       => 'contact@seryvon.com',
+    ],
+    'cors_origin' => 'https://votre-domaine.com',
+];
+```
+
+> ⚠️ Ajoutez `config.php` à votre `.gitignore` — ne jamais commit les credentials.
+
+Générer le fichier contact.php
+Configurer l'URL API de production
+
+
+
+
+
+
+
