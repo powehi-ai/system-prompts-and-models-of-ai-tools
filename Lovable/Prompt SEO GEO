@@ -1,0 +1,165 @@
+## Prompt SEO & GEO — Spécifications techniques complètes
+
+### 1. Architecture SEO internationale
+
+- **Routing i18n** : Préfixe locale dans l'URL (`/:lang/`), ex. `/fr/`, `/en/`.
+- **Redirection racine** : `/ → /fr` en 301 (via `.htaccess` et `_redirects`).
+- **Canonical** : Chaque page injecte dynamiquement `` pointant vers l'URL localisée complète (ex. `https://monsite.com/fr/ma-page`).
+- **Hreflang** : 3 balises injectées par page :
+  - `hreflang="fr"` → version FR
+  - `hreflang="en"` → version EN
+  - `hreflang="x-default"` → pointe vers la version FR (locale par défaut)
+- **Nettoyage** : Les balises hreflang sont supprimées au démontage du composant pour éviter les doublons en SPA.
+
+### 2. Métadonnées dynamiques (hooks React)
+
+Deux hooks dédiés gèrent l'injection DOM des balises SEO :
+
+#### `usePageSEO({ title, description, slug })`
+- Injecte : `document.title`, `meta[description]`, `og:title`, `og:description`, `og:url`, `twitter:title`, `twitter:description`
+- Injecte : canonical + hreflangs
+- Scroll to top au montage
+- Cleanup au démontage (reset title + suppression hreflangs)
+
+#### `useArticleSEO({ title, description, slug, image, publishedDate, modifiedDate, author, tags, faqItems })`
+- Tout ce que fait `usePageSEO` +
+- `og:type: article`, `og:image`, `article:published_time`, `article:modified_time`
+- `twitter:image`
+- `meta[author]`
+- JSON-LD Article (voir section 4)
+- JSON-LD FAQ optionnel si `faqItems` fourni
+- Cleanup complet au démontage
+
+#### Homepage (`App.tsx`)
+- `useEffect` dédié qui injecte title, description, keywords, OG, Twitter, canonical selon la locale
+- **Title** : max 60 caractères
+- **Description** : max 160 caractères
+- **Keywords** : liste de mots-clés séparés par virgules, localisés
+
+### 3. Balises meta statiques (fallback `index.html`)
+
+```html
+
+```
+
+### 4. Données structurées JSON-LD
+
+#### Organization + Service (Homepage)
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "...",
+  "url": "...",
+  "logo": "...",
+  "sameAs": ["LinkedIn", "Twitter"]
+}
+```
+
+#### Article (Blog)
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "...",
+  "description": "...",
+  "image": "...",
+  "datePublished": "...",
+  "dateModified": "...",
+  "author": { "@type": "Organization", "name": "...", "url": "..." },
+  "publisher": { "@type": "Organization", "name": "...", "logo": {...} },
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "canonical_url" },
+  "about": [
+    { "@type": "Thing", "name": "AI Act", "sameAs": "url_wikipedia_ou_officiel" },
+    { "@type": "Thing", "name": "Artificial Intelligence", "sameAs": "url_wikipedia" }
+  ],
+  "speakable": { "@type": "SpeakableSpecification", "cssSelector": ["h1", "article > section:first-of-type p"] },
+  "inLanguage": "fr"
+}
+```
+
+#### FAQ (optionnel, par article ou page)
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "...", "acceptedAnswer": { "@type": "Answer", "text": "..." } }
+  ]
+}
+```
+
+### 5. GEO — Generative Engine Optimization
+
+#### `robots.txt`
+Autoriser explicitement tous les crawlers IA :
+```
+User-agent: GPTBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: GoogleOther
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: anthropic-ai
+Allow: /
+User-agent: Applebot-Extended
+Allow: /
+User-agent: cohere-ai
+Allow: /
+```
+
+#### Fichiers LLM discovery
+- **`/llms.txt`** : Résumé structuré du site (nom, description, URLs principales, offres) — format texte brut, ~30 lignes.
+- **`/llms-full.txt`** : Version détaillée avec méthodologie, pricing, FAQ, infos techniques — format texte brut, ~100+ lignes.
+
+#### Entity Linking dans JSON-LD
+- Utiliser `sameAs` pointant vers Wikipedia, sites officiels EU, etc.
+- Champ `about` avec des `Thing` nommés et liés pour ancrer les entités.
+
+#### SpeakableSpecification
+- Déclarer les sélecteurs CSS des contenus prononçables (`h1`, premiers paragraphes).
+
+### 6. Sitemap
+
+- **Fichier** : `/sitemap.xml` généré depuis une config centralisée (`src/config/routes.ts`).
+- **Structure** : Chaque route est déclinée par locale (`/fr/...`, `/en/...`).
+- Champs : `loc`, `lastmod`, `changefreq`, `priority`.
+- Référencé dans `robots.txt` : `Sitemap: https://monsite.com/sitemap.xml`
+
+### 7. SEO Debug Panel (dev only)
+
+- Composant flottant en bas à gauche, visible uniquement en `import.meta.env.DEV`.
+- Audit temps réel : title (longueur), description (longueur), keywords, canonical (vérifie préfixe locale), hreflangs (vérifie x-default), OG tags, Twitter tags, JSON-LD types.
+- Se met à jour automatiquement à chaque changement de route.
+
+### 8. Performance SEO
+
+- **Lazy loading** : Sections below-the-fold chargées via `React.lazy` + `Suspense`.
+- **Compression** : GZIP activé via `.htaccess` (text/html, css, js, json, svg).
+- **Cache statique** : Expires headers 1 an pour CSS, JS, images, fonts.
+- **SPA fallback** : Toutes les routes non-fichier redirigées vers `index.html`.
+
+### 9. Règles de validation
+
+| Élément | Règle |
+|---|---|
+| Title | ≤ 60 caractères, mot-clé principal inclus |
+| Meta description | ≤ 160 caractères |
+| Canonical | Doit contenir le préfixe locale (`/fr` ou `/en`) |
+| Hreflang | Minimum 3 (fr, en, x-default) |
+| OG tags | title, description, url, image obligatoires |
+| JSON-LD | Au moins 1 par page (Organization, Article, ou FAQ) |
+| H1 | Un seul par page, cohérent avec le title |
+
+---
+
+Ce prompt couvre l'intégralité de la stack SEO/GEO du projet. Copie-le tel quel dans les instructions personnalisées de ton nouveau projet.
+
+Appliquer sur un autre projet
+Publier le site
