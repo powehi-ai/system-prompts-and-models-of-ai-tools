@@ -1,0 +1,165 @@
+Voici le prompt réutilisable pour dupliquer l'architecture du formulaire de contact sur un autre projet :
+
+---
+
+## 🛡️ PROMPT — Spécifications fonctionnelles du formulaire de contact
+
+### 1. Architecture générale
+
+```
+Frontend : React + TypeScript + Zod (validation client)
+Backend  : PHP natif (API REST JSON)
+BDD      : MySQL / MariaDB (InnoDB, utf8mb4)
+Email    : PHPMailer SMTP (avec fallback mail() natif)
+i18n     : FR par défaut, EN supporté (détection via hook useLocale)
+```
+
+### 2. Schéma de validation client (Zod)
+
+```typescript
+const contactSchema = z.object({
+  name:    z.string().trim().min(1).max(100),
+  email:   z.string().trim().email().max(255),
+  phone:   z.string().trim().min(1).max(20).regex(/^[+\d\s\-().]+$/),
+  company: z.string().trim().max(100).optional(),
+  message: z.string().trim().min(1).max(2000),
+})
+```
+
+- Tous les messages d'erreur sont localisés (FR/EN) via le hook `useLocale`.
+- La validation est exécutée côté client **avant** l'envoi (`safeParse`).
+
+### 3. Anti-spam : Honeypot
+
+- Un champ caché `website` est rendu invisible (`opacity-0`, `h-0`, `overflow-hidden`, `aria-hidden="true"`, `tabIndex={-1}`).
+- Si rempli → le frontend ignore silencieusement ; le backend répond `200 OK` sans traitement réel.
+- Aucun CAPTCHA visible pour préserver l'UX.
+
+### 4. Rate limiting (côté serveur)
+
+```
+Max 3 soumissions / IP / fenêtre de 10 minutes
+Stockage : fichier JSON temporaire (sys_get_temp_dir())
+Clé : md5(IP)
+Réponse si dépassé : HTTP 429 + message localisé
+```
+
+### 5. Endpoint API
+
+```
+POST /api/contact.php
+Content-Type: application/json
+
+Body :
+{
+  "name": "string",
+  "email": "string",
+  "phone": "string",
+  "company": "string|null",
+  "message": "string",
+  "website": ""  // honeypot — doit être vide
+}
+
+Réponses :
+- 200 { "success": true, "message": "..." }
+- 200 { "success": true, "warning": "..." }  // email non envoyé mais données enregistrées
+- 400 { "success": false, "error": "..." }    // validation échouée
+- 405 { "success": false, "error": "..." }    // mauvaise méthode HTTP
+- 429 { "success": false, "error": "..." }    // rate limit
+- 500 { "success": false, "error": "..." }    // erreur serveur
+```
+
+### 6. Validation serveur (PHP)
+
+- Double validation identique au client : longueurs, format email (`FILTER_VALIDATE_EMAIL`), regex téléphone.
+- Nettoyage `trim()` sur tous les champs.
+- Aucune donnée utilisateur insérée dans les headers email sans assainissement (`preg_replace('/[\r\n]+/', ...)`).
+
+### 7. Base de données
+
+```sql
+CREATE TABLE contact_submissions (
+  id         INT AUTO_INCREMENT PRIMARY KEY,
+  name       VARCHAR(100) NOT NULL,
+  email      VARCHAR(255) NOT NULL,
+  phone      VARCHAR(20) NOT NULL,
+  company    VARCHAR(100) DEFAULT NULL,
+  message    TEXT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  ip_address VARCHAR(45) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+```
+
+- Connexion via PDO avec `ERRMODE_EXCEPTION`.
+- IP stockée pour traçabilité et anti-abus.
+
+### 8. Notification email
+
+```
+Priorité 1 : PHPMailer SMTP authentifié (TLS/SSL, timeout 10s)
+Priorité 2 : Fallback mail() natif si PHPMailer non installé
+
+Contenu : texte brut (pas HTML)
+Reply-To : email du soumissionnaire
+Sujet : "Nouvelle demande d'audit IA — {nom}"
+Corps : nom, email, téléphone, entreprise, message, IP, date
+```
+
+- Configuration externalisée dans `config.php` (credentials jamais dans le code).
+- Debug SMTP loggé dans un fichier dédié (`contact_errors.log`), jamais exposé au client.
+
+### 9. CORS
+
+```
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: POST, OPTIONS
+Access-Control-Allow-Headers: Content-Type
+Preflight OPTIONS → 204 No Content
+```
+
+> ⚠️ En production, remplacer `*` par le domaine exact.
+
+### 10. UX Frontend
+
+| Élément | Comportement |
+|---|---|
+| **État initial** | Formulaire avec 5 champs + bouton animé (framer-motion) |
+| **Erreurs client** | Affichées sous chaque champ en `text-destructive` |
+| **Erreur serveur** | Bandeau centré `bg-destructive/10` |
+| **Envoi en cours** | Bouton disabled + texte "Envoi en cours…" |
+| **Succès** | Remplacement du formulaire par confirmation (icône ✓ + message) |
+| **Warning** | Affiché sous la confirmation si email non envoyé |
+| **Réinitialisation** | Lien "Envoyer un autre message" pour revenir au formulaire |
+
+### 11. Design system
+
+- Inputs : `bg-card/90 border-primary/25 rounded-xl` + `backdrop-blur-sm` + `focus:ring-primary/50`
+- Bouton : classe utilitaire `btn-premium` + animation `whileHover/whileTap`
+- Couleurs : exclusivement tokens sémantiques Tailwind (jamais de couleurs hardcodées dans le composant)
+- Responsive : grid `lg:grid-cols-2`, formulaire dans une `card-premium`
+
+### 12. Logging serveur
+
+```
+Fichier : /api/contact_errors.log
+Format  : [YYYY-MM-DD HH:MM:SS] [LEVEL] Message | {context JSON}
+Niveaux : INFO (succès), WARN (honeypot, rate limit, fallback), ERROR (MySQL, SMTP)
+```
+
+### 13. Checklist sécurité
+
+- ✅ Validation client ET serveur (double barrière)
+- ✅ Honeypot anti-bot (pas de CAPTCHA)
+- ✅ Rate limiting par IP
+- ✅ Prepared statements PDO (anti-injection SQL)
+- ✅ Assainissement headers email (anti-injection CRLF)
+- ✅ Credentials externalisés (`config.php`)
+- ✅ Aucune donnée sensible exposée dans les réponses API
+- ✅ Logs serveur uniquement (jamais côté client)
+
+---
+
+Ce prompt couvre l'intégralité de la stack formulaire. Collez-le dans les **custom instructions** du nouveau projet pour reproduire la même architecture.
+
+Publier le site
+Tester le formulaire E2E
