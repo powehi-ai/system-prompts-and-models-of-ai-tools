@@ -1,0 +1,177 @@
+Je souhaite que tu passes le projet en multilanguage sur la base de ce prompt : 
+
+🌐 PROMPT — Spécifications fonctionnelles i18n (FR/EN)
+
+1. Architecture générale
+
+Stratégie   : Routing localisé (/:lang/) — PAS de fichiers JSON de traduction
+Framework   : React Router v6 + Context Provider custom
+Locale par défaut : fr (= x-default pour SEO)
+Locales supportées : fr, en
+Traductions : Ternaires inline dans chaque composant (const en = locale === 'en')
+
+
+2. Provider de langue (useLocale)
+
+// Hook central — fournit :
+interface LocaleContext {
+  locale: 'fr' | 'en'           // Locale active déduite de l'URL
+  setLocale: (l: string) => void // Redirige vers /:newLocale/...
+  t: (fr: string, en: string) => string // Helper ternaire rapide
+}
+
+Le provider lit le premier segment de l'URL (/:lang/) pour déterminer la locale.
+
+setLocale effectue un navigate() vers la même route avec le nouveau préfixe de langue.
+
+Aucune dépendance externe (pas de i18next, react-intl, etc.).
+
+3. Structure des routes
+
+// Schéma de routage
+<Route path="/" element={<RedirectToLocale />} />       // 301 → /fr
+<Route path="/:lang" element={<LocaleProvider />}>
+  <Route index element={<HomePage />} />
+  <Route path="ai-act" element={<AIActPage />} />
+  <Route path="blog/article-slug" element={<ArticleFR />} />
+  // ...
+</Route>
+<Route path="/en">
+  <Route path="blog/article-slug" element={<ArticleEN />} />
+  // ...
+</Route>
+<Route path="*" element={<NotFound />} />               // 404 localisé
+
+Redirection racine : / → /fr (301 via .htaccess + _redirects + composant React fallback).
+
+Pas de chaîne de redirection : tous les liens internes pointent explicitement vers /${locale}/....
+
+4. Patron de traduction dans les composants
+
+// Pattern standard dans chaque composant :
+const { locale } = useLocale()
+const en = locale === 'en'
+
+// Usage inline :
+<h1>{en ? 'Our AI Audits' : 'Nos audits IA'}</h1>
+<p>{en ? <>Response within <strong>48h</strong></> : <>Réponse sous <strong>48h</strong></>}</p>
+
+// Listes localisées :
+const items = en
+  ? ['Free discovery call', 'Custom quote']
+  : ['Entretien exploratoire offert', 'Devis personnalisé']
+
+Pourquoi pas de fichiers JSON ? Le site a un nombre limité de pages. Les ternaires inline offrent : typage natif, colocalisation contenu/composant, pas de clé à maintenir, JSX riche (balises <strong>, <br/>) sans interpolation complexe.
+
+5. Articles de blog
+
+Stratégie : Un composant dédié par langue et par article
+Exemple :
+  src/pages/ArticleAgentIA.tsx          → version FR
+  src/pages/en/ArticleAgentIAEN.tsx     → version EN
+
+Chaque article a sa propre route :
+  /fr/blog/agent-ia-entreprise
+  /en/blog/ai-agent-enterprise
+
+
+Les articles ne partagent PAS de composant commun avec ternaires (contenu trop long/différent).
+
+Chaque version appelle son propre hook SEO avec métadonnées localisées.
+
+6. Pages légales & statiques
+
+Stratégie : Composant unique avec ternaires
+Exemple : MentionsLegales.tsx gère FR et EN dans le même fichier
+Route : /fr/mentions-legales et /en/legal-notice (slugs localisés)
+
+
+7. Sélecteur de langue (Navigation)
+
+Position : Barre de navigation principale (header)
+Composants : Drapeaux SVG inline (pas d'images externes)
+Comportement :
+  - Clic → setLocale() → navigation vers /${newLocale}/current-path
+  - Drapeau actif visuellement distinct (opacité, bordure)
+  - Accessible : aria-label descriptif, bouton sémantique
+  
+⚠️ SVG des drapeaux : utiliser viewBox + preserveAspectRatio pour éviter les distorsions
+
+
+8. SEO multilingue
+
+<!-- Balises injectées dynamiquement par usePageSEO / useArticleSEO -->
+
+<!-- Canonical : toujours la version locale courante -->
+<link rel="canonical" href="https://domain.com/fr/page" />
+
+<!-- Hreflang : toutes les versions + x-default -->
+<link rel="alternate" hreflang="fr" href="https://domain.com/fr/page" />
+<link rel="alternate" hreflang="en" href="https://domain.com/en/page" />
+<link rel="alternate" hreflang="x-default" href="https://domain.com/fr/page" />
+
+<!-- OG locale -->
+<meta property="og:locale" content="fr_FR" />
+<meta property="og:locale:alternate" content="en_US" />
+
+x-default pointe toujours vers la version FR.
+
+Les hooks SEO reçoivent les chemins des deux versions pour générer automatiquement les hreflang.
+
+9. Redirections serveur
+
+# .htaccess — Redirection racine
+RewriteRule ^$ /fr [R=301,L]
+
+# _redirects (Netlify/Lovable)
+/ /fr 301
+
+# Pas de redirection automatique basée sur Accept-Language
+# (évite les problèmes de cache CDN et de SEO)
+
+10. Fil d'Ariane (Breadcrumb)
+
+// Synchronisé avec la locale active
+const crumbs = [
+  { label: en ? 'Home' : 'Accueil', href: `/${locale}` },
+  { label: en ? 'Blog' : 'Blog', href: `/${locale}/blog` },
+  { label: articleTitle },  // Titre localisé de l'article
+]
+// Rendu avec balisage schema.org BreadcrumbList
+
+11. Prefetching localisé
+
+// Les routes des DEUX langues sont préchargées
+// lors du survol du sélecteur de langue ou en idle time
+usePrefetchRoutes([
+  () => import('./pages/HomePage'),
+  () => import('./pages/en/ArticleEN'),
+  // ...
+])
+
+12. Page 404 localisée
+
+// Détecte la locale depuis l'URL même sur une route inconnue
+const locale = pathname.startsWith('/en') ? 'en' : 'fr'
+
+// Affiche le message et le lien retour dans la bonne langue
+<h1>{en ? 'Page not found' : 'Page introuvable'}</h1>
+<a href={`/${locale}`}>{en ? 'Back to home' : 'Retour à l'accueil'}</a>
+
+13. Checklist i18n
+
+✅ Toutes les chaînes visibles sont traduites (y compris placeholders, aria-labels, alt)
+
+✅ Les slugs d'URL sont localisés (/mentions-legales vs /legal-notice)
+
+✅ Les métadonnées SEO (title, description, OG) sont localisées
+
+✅ JSON-LD inLanguage correspond à la locale active
+
+✅ Hreflang + canonical injectés sur chaque page
+
+✅ Sitemap inclut toutes les URLs localisées
+
+✅ Aucune chaîne hardcodée oubliée (vérifiable via le SEO Debug Panel)
+
+✅ Les liens internes utilisent toujours le préfixe /${locale}/
