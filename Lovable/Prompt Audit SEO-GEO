@@ -1,0 +1,757 @@
+Run a full-platform SEO + GEO audit of world-models.io now.
+
+Be strict. Do not assume good implementation intent equals good SEO/GEO reality.
+
+This is an audit-only pass.
+
+Do NOT modify code.
+
+Do NOT implement fixes.
+
+Do NOT redesign anything.
+
+Do NOT refactor.
+
+Do NOT add features.
+
+Do NOT change content.
+
+Do NOT change routing.
+
+Do NOT change metadata.
+
+Do NOT touch the database.
+
+Your job is only to:
+
+1. inspect the current platform deeply
+
+2. verify whether the current implementation truly matches the intended SEO/GEO strategy
+
+3. identify strengths, weaknesses, blockers, and missed opportunities
+
+4. propose a prioritized action plan
+
+===============================================================================
+
+STRATEGIC CONTEXT
+
+===============================================================================
+
+world-models.io is not a generic AI tools site.
+
+It is intended to become the global knowledge hub for AI World Models.
+
+The product direction is:
+
+- Wikipedia x GitHub Explorer x Research Hub
+
+That means the platform should behave as:
+
+- a structured knowledge layer
+
+- a discoverability layer
+
+- a research-oriented editorial product
+
+- a technical authority site
+
+- a product that is also highly indexable and GEO-friendly
+
+The audit must evaluate the current platform against that strategic standard.
+
+Do not assume previous plans were implemented correctly.
+
+Verify the actual current state.
+
+===============================================================================
+
+PRIMARY OBJECTIVE
+
+===============================================================================
+
+Audit the full platform across all important SEO, GEO, content architecture, entity structure, and discovery dimensions.
+
+The purpose is to determine:
+
+- what is already strong
+
+- what is partially correct
+
+- what is risky
+
+- what is missing
+
+- what should be prioritized next
+
+- whether the platform is ready for a stronger SEO push
+
+This is not just a technical SEO audit.
+
+It is a full product-aware SEO + GEO audit for a knowledge/discovery platform.
+
+===============================================================================
+
+AUDIT SCOPE
+
+===============================================================================
+
+You must inspect and assess all relevant areas of the current platform, including where applicable:
+
+- homepage
+
+- model pages
+
+- leaderboard
+
+- collections
+
+- compare pages
+
+- guide pages
+
+- research pages
+
+- lab pages
+
+- database/discovery pages
+
+- timeline/news page if it exists
+
+- multilingual behavior if implemented
+
+- internal linking system
+
+- structured data/schema
+
+- sitemap/canonical/hreflang logic if present
+
+Do not assume every section exists.
+
+Audit what is actually implemented.
+
+===============================================================================
+
+SECTION 1 — STRATEGIC FIT AUDIT
+
+===============================================================================
+
+Audit whether the current platform actually feels like:
+
+- Wikipedia x GitHub Explorer x Research Hub
+
+Check:
+
+- whether the product feels like a true knowledge platform
+
+- whether discoverability is strong
+
+- whether technical credibility is visible
+
+- whether the structure supports authority building
+
+- whether the UX supports exploration of models, labs, papers, guides, and rankings
+
+- whether the platform currently feels fragmented or coherent
+
+For this section, report:
+
+- what aligns well with the strategy
+
+- what feels off-strategy
+
+- what weakens the intended product identity
+
+===============================================================================
+
+SECTION 2 — TECHNICAL SEO AUDIT
+
+===============================================================================
+
+Verify the technical SEO state of the platform.
+
+Check:
+
+- title tags
+
+- meta descriptions
+
+- canonical tags
+
+- indexability signals
+
+- crawlable links
+
+- semantic HTML structure
+
+- heading hierarchy
+
+- sitemap quality
+
+- robots readiness if present
+
+- redirect cleanliness
+
+- duplicate route risks
+
+- duplicate content risks
+
+- thin-page risks
+
+- route clarity and crawlability
+
+- whether key pages are meaningfully indexable
+
+If some technical elements are only visible in implementation patterns, inspect those patterns.
+
+For this section, identify:
+
+- what is correct
+
+- what is weak
+
+- what is risky
+
+- what should be prioritized
+
+===============================================================================
+
+SECTION 3 — ON-PAGE SEO AUDIT
+
+===============================================================================
+
+Audit the on-page SEO quality of all main page types.
+
+Check at minimum:
+
+- homepage
+
+- leaderboard
+
+- collections
+
+- model pages
+
+- compare pages
+
+- guide pages
+
+- research pages
+
+- lab pages
+
+- timeline/news if it exists
+
+For each page type, verify:
+
+- clear H1
+
+- useful opening summary
+
+- topic clarity
+
+- heading structure
+
+- enough indexable text
+
+- semantic sections
+
+- useful internal links
+
+- whether the page can realistically rank
+
+- whether the page is too UI-heavy and too thin on content
+
+- whether the page matches a clear search intent
+
+Be specific to this niche.
+
+Do not evaluate by generic SEO clichés only.
+
+===============================================================================
+
+SECTION 4 — GEO / AI-SEARCH AUDIT
+
+===============================================================================
+
+Audit the platform for GEO readiness:
+
+how well it supports extraction, summarization, citation, and answer generation by AI systems.
+
+Check whether pages include:
+
+- clear definitions near the top
+
+- concise summaries
+
+- scannable headings
+
+- FAQ blocks where useful
+
+- clear distinction between objective signals and community/editorial signals
+
+- trustworthy wording
+
+- structured explanatory content
+
+- easy-to-extract entity information
+
+- clear pathways to adjacent content
+
+This is especially important for:
+
+- model pages
+
+- leaderboard
+
+- collections
+
+- compare pages
+
+- foundational hub pages
+
+Assess whether an AI system could clearly answer:
+
+- What is this page about?
+
+- What is this model?
+
+- Why is it important?
+
+- Why is it ranked here?
+
+- What is benchmark-based versus community-based?
+
+- What related pages should be explored next?
+
+===============================================================================
+
+SECTION 5 — MODEL PAGE AUDIT
+
+===============================================================================
+
+Audit model pages as the core entity pages of the platform.
+
+Check:
+
+- H1 quality
+
+- short definition quality
+
+- overview quality
+
+- attribute table quality
+
+- lab/company visibility
+
+- benchmark visibility
+
+- internal linking to related models
+
+- internal linking to collections
+
+- internal linking to leaderboard if relevant
+
+- internal linking to research/guides if relevant
+
+- discovery depth
+
+- content depth
+
+- authority feel
+
+- GEO extractability
+
+Determine whether model pages feel like strong canonical knowledge pages for each model.
+
+===============================================================================
+
+SECTION 6 — LEADERBOARD AUDIT
+
+===============================================================================
+
+Audit the leaderboard deeply as a major product and SEO surface.
+
+Check:
+
+- whether the leaderboard has a strong H1 and intro
+
+- whether ranking logic is explained clearly
+
+- whether community signals are clearly distinguished from benchmark/editorial signals
+
+- whether the page is meaningful without interaction
+
+- whether methodology/trust blocks are strong enough
+
+- whether the page is discoverable and indexable
+
+- whether the leaderboard acts as a strong navigation hub
+
+- whether it strengthens model discovery
+
+- whether it supports SEO/GEO trust
+
+Also assess:
+
+- whether the leaderboard is too UI-heavy
+
+- whether the page has enough explanatory content
+
+- whether rank/trust language is accurate
+
+- whether the leaderboard helps or hurts product credibility
+
+===============================================================================
+
+SECTION 7 — COLLECTIONS AUDIT
+
+===============================================================================
+
+Collections already exist.
+
+Audit them as thematic SEO/discovery clusters.
+
+Check:
+
+- whether collection pages are useful on their own
+
+- whether they have clear purpose
+
+- whether they include strong intro/editorial framing
+
+- whether they explain why the collection matters
+
+- whether they support topical authority
+
+- whether they link well to model pages
+
+- whether they connect naturally to leaderboard and other entities
+
+- whether they create meaningful content clusters
+
+Assess whether collections are:
+
+- useful to users
+
+- useful to search engines
+
+- useful to AI answer engines
+
+===============================================================================
+
+SECTION 8 — COMPARE / GUIDE / RESEARCH / LAB PAGE AUDIT
+
+===============================================================================
+
+Audit the other major entity/content templates.
+
+For compare pages, check:
+
+- comparison clarity
+
+- usefulness
+
+- whether differences are clearly explained
+
+- whether they support ranking for comparative search intent
+
+For guide pages, check:
+
+- whether they are truly guide-like
+
+- whether structure is useful and step-oriented where relevant
+
+- whether they justify HowTo or Article schema if used
+
+For research pages, check:
+
+- authority and concept depth
+
+- research usefulness
+
+- relationship to models and labs
+
+For lab pages, check:
+
+- whether they are strong entity pages
+
+- whether they connect well to models and research themes
+
+===============================================================================
+
+SECTION 9 — INTERNAL LINKING / DISCOVERY AUDIT
+
+===============================================================================
+
+Audit how well the platform supports internal exploration.
+
+Check:
+
+- homepage → models / leaderboard / collections
+
+- leaderboard → models
+
+- collections → models
+
+- model pages → collections
+
+- model pages → related models
+
+- model pages → labs / guides / compare / research
+
+- compare/guides/research/labs → model pages
+
+- timeline/news → deeper pages if present
+
+Determine whether the platform behaves like a connected knowledge graph or still feels partially fragmented.
+
+Identify:
+
+- missing links
+
+- weak discovery flows
+
+- orphaned or underlinked page types
+
+- missed clustering opportunities
+
+===============================================================================
+
+SECTION 10 — INFORMATION ARCHITECTURE AUDIT
+
+===============================================================================
+
+Audit the platform’s overall structure as a product and content system.
+
+Check whether the current architecture makes sense for:
+
+- topical authority
+
+- SEO scaling
+
+- GEO extraction
+
+- user understanding
+
+- future content expansion
+
+- entity discoverability
+
+Evaluate:
+
+- hierarchy of pages
+
+- taxonomy consistency
+
+- role of leaderboard
+
+- role of collections
+
+- role of model pages
+
+- role of guides/research/compare/labs
+
+- whether the product surfaces and editorial surfaces feel strategically aligned
+
+===============================================================================
+
+SECTION 11 — STRUCTURED DATA / SCHEMA AUDIT
+
+===============================================================================
+
+Audit structured data usage wherever relevant.
+
+Check:
+
+- whether schema is present where appropriate
+
+- whether schema matches page intent
+
+- whether there are mismatches
+
+- whether FAQ schema aligns with visible content
+
+- whether compare pages, guide pages, model pages, leaderboard, and collections are using appropriate schema patterns
+
+- whether schema strengthens or weakens trust
+
+- whether anything looks malformed, duplicated, or semantically weak
+
+Do not invent schema that does not exist.
+
+Verify actual usage and recommend improvements where necessary.
+
+===============================================================================
+
+SECTION 12 — MULTILINGUAL / INTERNATIONAL SEO AUDIT
+
+===============================================================================
+
+If multilingual logic is implemented, audit it too.
+
+Check:
+
+- hreflang consistency
+
+- canonical consistency
+
+- language targeting
+
+- whether equivalent pages are mapped correctly
+
+- whether translated pages are actually localized
+
+- whether language switching preserves equivalent intent
+
+- whether sitemap/hreflang support language targeting properly
+
+If multilingual is not implemented, state that clearly and skip gracefully.
+
+===============================================================================
+
+SECTION 13 — UX / SEO INTERSECTION AUDIT
+
+===============================================================================
+
+Audit whether UX decisions help or hurt SEO/GEO.
+
+Check:
+
+- readability
+
+- mobile clarity
+
+- scannability
+
+- whether interactive UI hides too much meaning
+
+- whether data-heavy pages still have sufficient explanatory text
+
+- whether premium design improves or harms crawlability
+
+- whether the product/SEO balance is currently strong
+
+This is important because world-models.io is both:
+
+- a content-rich discovery platform
+
+- a structured product interface
+
+===============================================================================
+
+OUTPUT FORMAT
+
+===============================================================================
+
+Return the audit in this exact structure:
+
+1. Executive summary
+
+- overall verdict
+
+- biggest strengths
+
+- biggest risks
+
+- overall SEO/GEO maturity level
+
+2. Scorecard
+
+Give a score from 1 to 10 for:
+
+- strategic fit
+
+- technical SEO
+
+- on-page SEO
+
+- GEO readiness
+
+- model page quality
+
+- leaderboard quality
+
+- collections quality
+
+- compare/guide/research/lab quality
+
+- internal linking
+
+- information architecture
+
+- structured data
+
+- multilingual SEO if relevant
+
+- product/SEO coherence
+
+3. Detailed audit by section
+
+For each section:
+
+- Status: OK / Warning / Problem
+
+- What is working
+
+- What is weak
+
+- Why it matters
+
+- Recommended next action
+
+4. Priority action plan
+
+Create a prioritized plan:
+
+- Priority 1
+
+- Priority 2
+
+- Priority 3
+
+etc.
+
+For each action:
+
+- what to do
+
+- why it matters
+
+- expected SEO/GEO impact
+
+- whether it is quick win, medium effort, or structural
+
+5. Final recommendation
+
+Give a short recommendation on:
+
+- whether the platform is ready for a stronger SEO push
+
+- whether some blockers should be fixed first
+
+- what the smartest next SEO/product move is
+
+===============================================================================
+
+IMPORTANT RULES
+
+===============================================================================
+
+- Audit only
+
+- No implementation
+
+- No code changes
+
+- No speculative claims without checking
+
+- Be precise
+
+- Be conservative
+
+- Prioritize trust and product coherence
+
+- Evaluate actual implementation, not past intentions
+
+- Keep the final response concise, structured, and high-signal
