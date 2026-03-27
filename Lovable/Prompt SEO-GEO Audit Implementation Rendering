@@ -1,0 +1,233 @@
+Implement the strongest practical free rendering improvement for this website in order to improve SEO/GEO crawlability on important public pages.
+
+Important:
+Do NOT redesign the site.
+Do NOT change product direction.
+Do NOT migrate the entire app to another framework unless absolutely unavoidable.
+Do NOT add paid third-party prerender services.
+Do NOT run a broad unrelated audit.
+Do NOT break the current application behavior.
+
+Your job is to analyze the current frontend/public rendering setup deeply, then implement the most practical free approach to improve crawler-visible HTML for the most important public SEO pages.
+
+===============================================================================
+PRIMARY GOAL
+===============================================================================
+
+Improve crawlability, indexability, and GEO visibility for important public pages using a pragmatic and free rendering strategy.
+
+The target outcome is:
+- stronger HTML output for important public routes
+- less dependence on client-side rendering for key SEO pages
+- better visibility for non-Google crawlers and AI answer-engine crawlers
+- no heavy full-site migration unless truly necessary
+- preservation of current product behavior and route logic
+
+This is a rendering hardening pass, not a product rebuild.
+
+===============================================================================
+STEP 1 — ANALYZE THE CURRENT RENDERING MODEL
+===============================================================================
+
+First, inspect the current implementation and determine what kind of site this is.
+
+You must identify:
+- whether the site is a pure SPA
+- whether it already has any SSR/SSG/prerender support
+- whether the site depends heavily on client-side rendering for public content
+- whether metadata and structured data are injected client-side only
+- whether important content is present in initial HTML or appears only after hydration
+- whether there is already a noscript fallback
+- whether there are already build-time route generation mechanisms
+- whether the current stack can support pre-rendering or static output for important routes
+
+You must be strict and evidence-based.
+Do not assume rendering is good enough just because the browser looks correct.
+
+===============================================================================
+STEP 2 — IDENTIFY THE HIGHEST-VALUE PUBLIC SEO ROUTES
+===============================================================================
+
+Before implementing anything, identify the most important public pages for SEO/GEO.
+
+You must classify routes into:
+
+1. High-value public SEO pages
+2. Medium-value public pages
+3. Low-value / thin / user-specific / app-only pages
+
+High-value public SEO pages may include:
+- homepage
+- landing pages
+- category pages
+- entity detail pages
+- compare pages
+- guide pages
+- research/article pages
+- glossary pages
+- collection pages
+- leaderboard or index pages
+- documentation pages
+- repository/detail pages
+- other strong content hubs
+
+Low-value or non-priority pages may include:
+- dashboard pages
+- login/auth pages
+- admin pages
+- highly user-specific pages
+- thin community pages
+- interactive visualizations with little crawlable content
+
+The rendering strategy must prioritize the highest-value public SEO routes first.
+
+===============================================================================
+STEP 3 — CHOOSE THE STRONGEST PRACTICAL FREE APPROACH
+===============================================================================
+
+After analyzing the site, implement the strongest realistic free rendering solution available in the current stack.
+
+Possible directions include:
+- build-time pre-rendering for important routes
+- static generation for key public pages
+- stronger crawler-visible HTML for important pages
+- route-specific pre-rendering for entity pages
+- improving initial HTML content on key routes
+- preserving or improving noscript fallback if relevant
+
+Important:
+- prefer the simplest maintainable solution
+- do not overengineer
+- do not introduce a paid dependency
+- do not force a full SSR migration unless there is no realistic alternative
+- if full prerendering is not feasible for every route, cover the highest-value routes first
+
+===============================================================================
+STEP 4 — IMPLEMENT PRE-RENDERING OR STRONGER STATIC OUTPUT WHERE FEASIBLE
+===============================================================================
+
+Implement the strongest practical free strategy for the most valuable public pages.
+
+Your implementation should prioritize:
+- pages with strong ranking potential
+- pages that represent entities or structured knowledge
+- pages that need to be readable by search engines and AI systems
+- pages whose meaning should be visible before client-side interactivity
+
+If build-time pre-rendering is feasible:
+- implement it cleanly
+- keep route generation maintainable
+- preserve metadata and structured data
+- preserve canonical and indexability logic
+
+If full pre-rendering is not feasible:
+- improve initial HTML and visible page meaning for key routes
+- strengthen crawler-visible summaries, headings, and links
+- ensure important pages remain understandable before interaction
+
+===============================================================================
+STEP 5 — PRESERVE EXISTING SEO/GEO SIGNALS
+===============================================================================
+
+Do not weaken anything that is already correct.
+
+You must preserve:
+- title tags
+- meta descriptions
+- canonicals
+- breadcrumb schema
+- JSON-LD
+- noindex logic for thin pages
+- hreflang behavior where relevant
+- route behavior
+- internal linking
+- crawlable semantic structure
+
+If the current implementation already has strong SEO/GEO layers, your job is to make rendering stronger without regressing those layers.
+
+===============================================================================
+STEP 6 — STRENGTHEN CRAWLER-VISIBLE HTML ON HUB / INDEX PAGES
+===============================================================================
+
+For important hub/index/listing pages, make sure the page has enough meaningful visible HTML before interaction.
+
+Strengthen or preserve:
+- H1
+- introductory paragraph
+- clear explanation of what the page is
+- crawlable links to important child pages
+- semantic sections
+- enough static text for search engines and AI systems to understand purpose and scope
+
+Examples of important hub pages:
+- category hubs
+- collections hubs
+- article/guides/research indexes
+- compare indexes
+- database/explorer pages
+- repository hubs
+- directory pages
+- leaderboard pages
+
+The goal is that these pages should still make clear sense to crawlers even without rich client-side interaction.
+
+===============================================================================
+STEP 7 — KEEP LOW-VALUE OR THIN PAGES OUT OF THE RENDERING PRIORITY
+===============================================================================
+
+Do not waste implementation effort on low-value public pages.
+
+If the site already has:
+- thin UGC pages
+- low-value dynamic pages
+- app-only pages
+- dashboard/admin/auth routes
+- interactive-only views with little crawl value
+
+do not prioritize them for rendering improvements unless they are clearly intended to rank.
+
+Keep the rendering effort focused on the pages that can meaningfully improve SEO/GEO outcomes.
+
+===============================================================================
+STEP 8 — VERIFY THE RESULT
+===============================================================================
+
+After implementation, verify the result carefully.
+
+Check:
+- the app still builds correctly
+- no route regressions were introduced
+- important public routes now have stronger crawler-visible HTML
+- important public routes remain meaningful even before interaction
+- metadata/schema still work
+- mobile rendering is not broken
+- the implementation remains maintainable
+
+Be honest about limitations.
+If some routes still cannot be pre-rendered cleanly, say so clearly.
+
+===============================================================================
+OUTPUT REQUIREMENTS
+===============================================================================
+
+At the end, return a very short implementation summary with:
+
+1. what rendering strategy was chosen
+2. which route types were improved
+3. what was intentionally not covered
+4. remaining limitations, if any
+5. whether the site is now materially stronger for SEO/GEO crawlability
+
+===============================================================================
+IMPORTANT RULES
+===============================================================================
+
+- be pragmatic
+- be strict
+- prefer maintainable free solutions
+- do not migrate the whole stack unless unavoidable
+- do not add paid services
+- do not redesign
+- do not expand scope into unrelated product work
+- preserve everything already correct
+- keep the final explanation short and exact
