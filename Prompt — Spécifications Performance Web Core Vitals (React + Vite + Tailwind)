@@ -1,0 +1,171 @@
+Objectif : Score Lighthouse ≥ 99/100 mobile sur les 4 axes (Performance, Accessibilité, Bonnes pratiques, SEO).
+
+1. LARGEST CONTENTFUL PAINT (LCP < 1.2s)
+1.1 Static Shell Pattern
+Injecter dans index.html un shell HTML/CSS statique reproduisant visuellement le above-the-fold (hero, nav).
+Le shell utilise exclusivement du CSS inline — aucune dépendance externe.
+Le shell est l'élément LCP détecté par Lighthouse ; il est visible avant toute exécution JS.
+React rend un placeholder invisible (aria-hidden, min-height réservé) jusqu'au swap.
+Le swap est déclenché par : premier scroll, premier pointerdown, ou timeout (≥ 4s).
+Le swap masque le shell via une classe CSS (opacity: 0; pointer-events: none) — jamais display: none ni removeChild (évite le reflow).
+1.2 Preload des ressources critiques
+<link rel="preload" as="image" type="image/webp"> pour l'image hero.
+<link rel="preload" as="font" crossorigin> pour la police principale (woff2 uniquement).
+Ne jamais preload plus de 3 ressources — prioriser LCP.
+<link rel="modulepreload"> pour le entry point JS uniquement.
+1.3 Détection de route côté serveur/inline
+Script inline (<script>) dans <head> qui détecte le pathname.
+Si la route n'est pas la homepage : masquer immédiatement le shell (display: none).
+Évite les conflits de double H1 et les layouts shifts sur les pages secondaires.
+2. CUMULATIVE LAYOUT SHIFT (CLS < 0.05)
+2.1 Dimensions explicites
+Toute balise <img> doit avoir width et height en attributs HTML (valeurs intrinsèques).
+Utiliser aspect-ratio CSS comme complément, jamais comme substitut.
+Les conteneurs de contenu dynamique (listes, cards) ont une min-height réservée.
+2.2 Polices et FOUT
+Charger les polices avec font-display: swap et un preload.
+Définir une font-family stack avec des fallbacks métriquement proches (system-ui, sans-serif).
+Ne jamais charger plus de 2 variantes de police (regular + bold).
+2.3 Contenu injecté dynamiquement
+Les bannières cookies, toasts, modals sont positionnés en fixed ou absolute — jamais dans le flow.
+Les skeletons de chargement occupent exactement l'espace du contenu final.
+3. TOTAL BLOCKING TIME (TBT < 200ms)
+3.1 Code Splitting systématique
+Chaque route = un React.lazy(() => import('./pages/...')).
+Le bundle initial ne contient que : React, Router, le shell du layout, et le composant above-fold.
+Toute librairie > 20 KB gzippée est chargée via import() dynamique (framer-motion, recharts, tiptap, etc.).
+3.2 Chargement différé des librairies lourdes
+Pattern module-level cache :
+let lib: typeof import('heavy-lib') | null = null;
+
+useEffect(() => {
+  if (!lib) import('heavy-lib').then(m => { lib = m; setReady(true); });
+}, []);
+Rendre un fallback statique tant que la librairie n'est pas chargée.
+Ne jamais bloquer le rendu initial pour une animation ou un graphique.
+3.3 Monitoring / Analytics
+Sentry, analytics, pixels : chargés après hydratation, via requestIdleCallback ou setTimeout(fn, 0).
+Ne jamais injecter de <script> synchrone dans <head> pour du tracking.
+3.4 Event listeners passifs
+Tout listener scroll, touchmove, wheel : { passive: true }.
+Utiliser { once: true } quand le handler ne doit s'exécuter qu'une fois.
+4. FIRST CONTENTFUL PAINT (FCP < 1.0s)
+4.1 Critical CSS inline
+Extraire les styles nécessaires au premier écran dans un <style> inline dans <head>.
+Cela inclut : tokens CSS (variables), reset, layout grid, nav, hero, typographie de base.
+Le fichier CSS principal est chargé via <link rel="stylesheet"> standard (non bloquant grâce au critical inline).
+4.2 HTML minimal
+Le <body> initial contient uniquement : le shell statique + <div id="root"></div>.
+Aucun <noscript><img> ni pixel de tracking dans <head> (invalide HTML5).
+Les pixels <noscript> vont dans <body>.
+5. OPTIMISATION DES IMAGES
+5.1 Format et compression
+Servir systématiquement en WebP (fallback JPEG/PNG via <picture>).
+Utiliser un pipeline build-time (ex: vite-imagetools avec ?format=webp).
+Compression cible : qualité 75-80 pour les photos, 90 pour les illustrations.
+5.2 Chargement
+Images above-fold : loading="eager", decoding="async", fetchpriority="high".
+Images below-fold : loading="lazy", decoding="async".
+Toujours fournir sizes pour les images responsives.
+5.3 Parallax et animations d'images
+Désactiver les effets parallax sur mobile (useIsMobile() → valeurs statiques).
+Utiliser uniquement transform et opacity pour animer les images (jamais top, left, width).
+6. ANIMATIONS ET RENDU GPU
+6.1 Propriétés composites uniquement
+Animer exclusivement : transform, opacity, filter.
+Jamais : width, height, margin, padding, top, left, border, box-shadow (triggent layout/paint).
+6.2 will-change
+Appliquer will-change: transform uniquement sur les éléments effectivement animés.
+Ne jamais appliquer will-change globalement ou sur plus de 5 éléments simultanés.
+6.3 Réduction des repaints
+Grouper les mutations DOM.
+Préférer les classes CSS aux modifications inline de style.
+Utiliser requestAnimationFrame pour les animations JS manuelles.
+7. PREFETCH ET NAVIGATION SPA
+7.1 Prefetch au hover
+Écouter pointerenter (capture phase) sur les liens internes.
+Déclencher import('./pages/TargetPage') pour précharger le chunk.
+Maintenir un Set des routes déjà prefetchées pour éviter les doublons.
+7.2 Prefetch proactif
+Après 3s d'inactivité, prefetcher la route secondaire la plus visitée.
+Utiliser requestIdleCallback quand disponible, sinon setTimeout.
+7.3 Gestion des erreurs de chunk
+Listener global window.addEventListener('error') détectant les erreurs de chargement de module.
+Auto-refresh une seule fois (flag sessionStorage) pour récupérer les chunks obsolètes post-déploiement.
+8. ACCESSIBILITÉ (Score ≥ 96)
+8.1 Sémantique HTML
+Une seule <h1> par page.
+Hiérarchie <h1> → <h2> → <h3> sans sauter de niveau.
+Utiliser <main>, <nav>, <section>, <article>, <aside>, <footer>.
+Les listes utilisent <ul>/<ol> + <li>.
+8.2 Contraste et couleurs
+Ratio minimum 4.5:1 pour le texte normal, 3:1 pour le texte large (≥ 18px bold).
+Ne jamais transmettre d'information par la couleur seule (ajouter icône, texte, pattern).
+8.3 Navigation clavier
+Tous les éléments interactifs sont focusables et ont un focus-visible visible.
+Les modals, drawers, dropdowns implémentent le trap focus.
+tabindex négatif uniquement pour les éléments programmatiquement focusables.
+8.4 ARIA
+aria-hidden="true" sur les éléments décoratifs (icônes, images décoratives).
+alt="" (vide) pour les images purement décoratives — jamais d'alt omis.
+aria-label ou aria-labelledby sur les boutons icône-seule.
+Les régions live (aria-live="polite") pour les notifications/toasts.
+9. SEO TECHNIQUE (Score 100)
+9.1 Métadonnées
+<title> : < 60 caractères, mot-clé principal en début.
+<meta name="description"> : < 160 caractères, intention de recherche adressée.
+<meta name="robots" content="index, follow"> explicite.
+Open Graph complet : og:title, og:description, og:image, og:url, og:type, og:locale.
+Twitter Cards : twitter:title, twitter:description, twitter:image.
+9.2 Canonical et Hreflang
+<link rel="canonical"> sur chaque page, pointant vers l'URL canonique absolue.
+<link rel="alternate" hreflang="xx"> pour chaque locale + x-default.
+Les hreflang pointent vers des URLs avec slugs localisés (pas de slug FR sur une page EN).
+9.3 Données structurées (JSON-LD)
+Organization : sur la homepage.
+WebSite : sur la homepage.
+BreadcrumbList : sur toutes les pages internes.
+Article : sur les pages blog (avec datePublished, author, image).
+FAQPage : sur les pages contenant des FAQ.
+Service : sur les pages d'offres.
+Valider via https://search.google.com/test/rich-results.
+9.4 Sitemap et Robots
+sitemap.xml dynamique couvrant toutes les routes localisées.
+lastmod mis à jour à chaque déploiement.
+robots.txt autorisant les crawlers principaux et référençant le sitemap.
+Fichiers llms.txt et llms-full.txt pour la découvrabilité par les moteurs IA génératifs.
+10. BONNES PRATIQUES LIGHTHOUSE (Score 100)
+10.1 HTTPS et sécurité
+Tout le site servi en HTTPS.
+Pas de mixed content (ressources HTTP sur page HTTPS).
+CSP headers recommandés (Content-Security-Policy).
+10.2 Console propre
+Aucune erreur dans la console en production.
+Aucun console.log résiduel.
+Les deprecation warnings des librairies sont résolus ou supprimés.
+10.3 API modernes
+Pas d'API obsolètes (document.write, unload event, etc.).
+Utiliser IntersectionObserver au lieu de scroll pour le lazy loading custom.
+navigator.sendBeacon pour les analytics au beforeunload.
+11. DESIGN SYSTEM ET MAINTENABILITÉ
+11.1 Tokens CSS sémantiques
+Toutes les couleurs définies en HSL dans :root via des custom properties.
+Jamais de couleur en dur dans les composants (text-white, bg-black → interdit).
+Utiliser les tokens : --background, --foreground, --primary, --muted, etc.
+11.2 Composants atomiques
+Chaque composant < 200 lignes. Au-delà, refactorer en sous-composants.
+Les variants sont gérées via cva() (class-variance-authority).
+Les composants UI (boutons, cards, inputs) sont des primitives réutilisables.
+12. CHECKLIST PRÉ-DÉPLOIEMENT
+ Lighthouse mobile ≥ 95 sur les 4 axes
+ Aucune erreur console en production
+ Toutes les images ont width, height, alt
+ Toutes les images below-fold ont loading="lazy"
+ L'image LCP a fetchpriority="high" et est preloadée
+ Le shell statique est visuellement synchronisé avec le composant React
+ Le bundle initial < 150 KB gzippé (sans chunks lazy)
+ Les hreflang couvrent toutes les locales + x-default
+ Le sitemap est synchronisé avec les routes
+ Les données structurées passent le test Rich Results
+ Le CLS est < 0.05 sur mobile et desktop
+ Les animations sont désactivées sur mobile si elles impactent le TBT
