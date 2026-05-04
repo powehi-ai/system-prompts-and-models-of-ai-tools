@@ -1,4 +1,22 @@
 <p align="center">
+  <sub>Thanks to</sub>  
+</p>
+
+<p align="center">
+  <a href="https://github.com/latitude-dev/latitude-llm">
+    <img src="assets/latitude-dark.png" alt="Latitude Logo" width="700"/>
+  </a>
+</p>
+
+<div align="center" markdown="1">
+
+### [Issue Tracking for AI Agents](https://github.com/latitude-dev/latitude-llm)  
+[Open Source Monitoring platform](https://github.com/latitude-dev/latitude-llm)
+
+</div>
+
+---
+<p align="center">
   Support my work here: 
   <a href="https://bags.fm/DEffWzJyaFRNyA4ogUox631hfHuv3KLeCcpBh2ipBAGS">Bags.fm</a> •
   <a href="https://jup.ag/tokens/DEffWzJyaFRNyA4ogUox631hfHuv3KLeCcpBh2ipBAGS">Jupiter</a> •
@@ -7,13 +25,6 @@
 </p>
 
 <p align="center">Official CA: DEffWzJyaFRNyA4ogUox631hfHuv3KLeCcpBh2ipBAGS (on Solana)</p>
-
----
-
-<p align="center">
-❤️ Love when open-source tools give back to open-source repos. Kilo Code is an AI coding agent with the system prompt, source code, and agent architecture all in the open on their GitHub repo.  
-<a href="https://github.com/Kilo-Org/kilocode">Let’s show them some love</a> ❤️
-</p>
 
 ---
 
